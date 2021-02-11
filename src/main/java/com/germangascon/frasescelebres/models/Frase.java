@@ -16,9 +16,9 @@ public class Frase {
     @Column(name = "fechaProgramada", unique = true)
     private Date fechaProgramada;
     /** Relaciones */
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private Autor autor;
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private Categoria categoria;
 
     public Frase() {
