@@ -1,5 +1,6 @@
 package com.germangascon.frasescelebres.controllers;
 
+import com.germangascon.frasescelebres.enums.ResultadoAdd;
 import com.germangascon.frasescelebres.models.Autor;
 import com.germangascon.frasescelebres.models.Categoria;
 import com.germangascon.frasescelebres.models.Frase;
@@ -8,9 +9,11 @@ import com.germangascon.frasescelebres.repo.ICategoriaDao;
 import com.germangascon.frasescelebres.repo.IFraseDao;
 import com.germangascon.frasescelebres.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,25 +34,43 @@ public class FraseController {
         return repo.findAll();
     }
 
+    @GetMapping("/categoria/{id}")
+    public List<Frase> getFraseByCategoria(@PathVariable("id") Integer id){
+        return repo.getFrasesByCategoria(id);
+    }
+    @GetMapping("/autor/{id}")
+    public List<Frase> getFraseByAutor(@PathVariable("id") Integer id){
+        return repo.getFrasesByAutor(id);
+    }
+
+    @GetMapping("/all/{offset}")
+    public List<Frase> getFrasesLimit(@PathVariable("offset") Integer offset){
+        return repo.getFrasesLimit(offset);
+    }
+
     @GetMapping(value = "/{id}")
     public Optional<Frase> getFraseById(@PathVariable("id") Integer id) {
         return repo.findById(id);
     }
 
+    @GetMapping()
+    public Optional<Frase> getFraseById2(@RequestParam Integer id) {
+        return repo.findById(id);
+    }
+
     @GetMapping(value = "/dia/{dia}")
-    public Frase getFraseDelDia(@PathVariable("dia") Date dia) {
+    public Frase getFraseDelDia(@PathVariable("dia") String dia ) {
         return repo.getFraseDelDia(dia);
     }
 
     @PostMapping("/add")
-    public boolean addFrase(@RequestBody Frase frase) {
-        try {
+    public ResultadoAdd addFrase(@RequestBody Frase frase) {
+        try{
             Log.i("Nueva Frase: ", frase.toString());
             repo.save(frase);
-            return true;
-        } catch (Exception e) {
-            Log.e("Add Frase", e.getMessage());
-            return false;
+            return ResultadoAdd.OK;
+        }catch (Exception e){
+            return ResultadoAdd.FECHA_EXISTENTE;
         }
     }
 
@@ -85,14 +106,26 @@ public class FraseController {
     }
 
     @PutMapping("/update")
-    public void updateFrase(@RequestBody Frase frase) {
-        Log.i("Update Frase: ", frase.toString());
-        repo.save(frase);
+    public boolean updateFrase(@RequestBody Frase frase) {
+        try{
+            Log.i("Update Frase: ", frase.toString());
+            repo.save(frase);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteFrase(@PathVariable("id") Integer id) {
-        repo.deleteById(id);
+    public boolean deleteFrase(@PathVariable("id") Integer id) {
+        try {
+            repo.deleteById(id);
+            System.out.println("Frase eliminada");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

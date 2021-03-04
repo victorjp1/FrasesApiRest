@@ -1,6 +1,7 @@
 package com.germangascon.frasescelebres.controllers;
 
 import com.germangascon.frasescelebres.models.Autor;
+import com.germangascon.frasescelebres.models.Categoria;
 import com.germangascon.frasescelebres.repo.IAutorDao;
 import com.germangascon.frasescelebres.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +27,43 @@ public class AutorController {
     }
 
     @PostMapping("/add")
-    public void addAutor(@RequestBody Autor autor) {
-        Log.i("Nuevo autor: ", autor.toString());
-        repo.save(autor);
+    public boolean addAutor(@RequestBody Autor autor) {
+        try {
+            Log.i("Nuevo Autor: ", autor.toString());
+            repo.save(autor);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    @PutMapping
-    public void updateAutor(@RequestBody Autor autor) {
-        Log.i("Update Autor: ", autor.toString());
-        //repo.save(autor);
+    @GetMapping("/all/{offset}")
+    public List<Autor> getAutoresLimit(@PathVariable("offset") int offset) {
+        return repo.getAutoresLimit(offset);
+    }
+
+    @PutMapping("/update")
+    public boolean updateAutor(@RequestBody Autor autor) {
+        try {
+            Log.i("Update Autor: ", autor.toString());
+            repo.save(autor);
+            return true;
+        }catch (Exception e){
+            Log.e("Update autor", e.getMessage());
+            return false;
+        }
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteAutor(@PathVariable("id") Integer id) {
-        repo.deleteById(id);
+    public boolean deleteAutor(@PathVariable("id") Integer id) {
+        try{
+            repo.deleteById(id);
+            System.out.println("Autor eliminado correctamente");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

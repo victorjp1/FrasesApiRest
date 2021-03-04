@@ -2,6 +2,7 @@ package com.germangascon.frasescelebres.models;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Categoria {
@@ -9,8 +10,10 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY) /** Para auto_increment **/
     @Column(name = "id", updatable = false, nullable = false)
     private int id;
+    @Column(unique=true)
     private String nombre;
-
+    @OneToMany(mappedBy = "categoria", cascade=CascadeType.REMOVE)
+    private List<Frase> frase;
     public Categoria() {
     }
 

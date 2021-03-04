@@ -1,6 +1,7 @@
 package com.germangascon.frasescelebres.models;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,8 @@ public class Autor {
     /** Año de muerte del autor. Números negativos representan AC (Antes de Cristo) */
     private String muerte;
     private String profesion;
+    @OneToMany(mappedBy = "autor", cascade=CascadeType.REMOVE)
+    private List<Frase> frase;
 
     public Autor() {
     }
